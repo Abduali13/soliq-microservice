@@ -1,0 +1,43 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888/
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+          - id: user-service
+            predicates:
+                      - name: Path
+                        args:
+                          regexp: /user-service/**
+            uri: lb://user-service
+
+          - id: card-service
+            predicates:
+                      - name: Path
+                        args:
+                          regexp: /card-service/**
+            uri: lb://card-service
+
+          - id: payment-service
+            predicates:
+                      - name: Path
+                        args:
+                          regexp: /payment-service/**
+            uri: lb://payment-service
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
